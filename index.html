@@ -181,8 +181,11 @@
   .topic-card h3 small{display:block;font-size:11.5px;color:var(--muted);font-family:inherit;font-weight:400;margin-top:3px;letter-spacing:.02em;line-height:1.45}
   .topic-card .tagline{font-size:12.5px;color:#4c534b;margin:0 0 14px;line-height:1.7}
   .card-foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:9px;border-top:1px dashed var(--line);padding-top:8px}
-  .picked{font-size:10.5px;color:#9a9587;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:72%}
+  .picked{font-size:10.5px;color:#9a9587;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:52%}
   .picked.on{color:var(--jade);font-weight:600}
+  .card-actions{display:flex;align-items:center;gap:7px;margin-left:auto;flex-shrink:0}
+  .pick-btn{border:1px solid var(--jade);background:var(--jade);color:#fff;font-family:inherit;font-size:10.5px;padding:3px 8px;border-radius:2px;cursor:pointer;white-space:nowrap}
+  .pick-btn:hover{background:#174c3c}
   .detail-btn{border:0;background:none;font-family:inherit;font-size:11px;color:var(--muted);cursor:pointer;padding:2px;white-space:nowrap}
   .detail-btn:hover{color:var(--ink)}
   .card-detail{display:none;border-top:1px solid var(--line);margin-top:9px;padding-top:10px}
@@ -259,11 +262,21 @@
     </div>
   </header>
 
+  <section class="section" id="topics">
+    <div class="section-head">
+      <div>
+        <div class="section-title"><span class="num">01</span><h2>候选题材参考</h2></div>
+        <p class="section-sub">先看题材，点“选这个”会自动带到下面的表单；点“细节”看完整判断。12 个题材都写了做什么、为什么能打、最大风险、适合谁。</p>
+      </div>
+    </div>
+    <div class="topic-grid" id="topicGrid"></div>
+  </section>
+
   <section class="section" id="submit">
     <div class="section-head">
       <div>
-        <div class="section-title"><span class="num">01</span><h2>提交我的选题</h2></div>
-        <p class="section-sub">填完点一次提交即可。同一姓名再次提交会覆盖上一次，不用怕填错。</p>
+        <div class="section-title"><span class="num">02</span><h2>提交我的选题</h2></div>
+        <p class="section-sub">看完上面的题材卡片，再在这里提交。选姓名 → 自己选岗位 → 确认题材 → 写理由；同一姓名再次提交会覆盖上一次。</p>
       </div>
       <span class="live-chip"><span class="live-dot"></span>实时同步到汇总表</span>
     </div>
@@ -323,7 +336,7 @@
   <section class="section" id="board">
     <div class="section-head">
       <div>
-        <div class="section-title"><span class="num">02</span><h2>提交进度</h2></div>
+        <div class="section-title"><span class="num">03</span><h2>提交进度</h2></div>
         <p class="section-sub" id="boardSub">正在读取云端数据…</p>
       </div>
       <div class="toolbar">
@@ -356,7 +369,7 @@
   <section class="section" id="tally">
     <div class="section-head">
       <div>
-        <div class="section-title"><span class="num">03</span><h2>选题票数</h2></div>
+        <div class="section-title"><span class="num">04</span><h2>选题票数</h2></div>
         <p class="section-sub">按提交结果自动统计；同一题材的人会列在一起，方便组队前先看趋势。</p>
       </div>
     </div>
@@ -366,7 +379,7 @@
   <section class="section" id="roles">
     <div class="section-head">
       <div>
-        <div class="section-title"><span class="num">04</span><h2>两组分工</h2></div>
+        <div class="section-title"><span class="num">05</span><h2>两组分工</h2></div>
         <p class="section-sub">4 个岗位、每组各 1 人。<b>岗位由每个人自己选，不预设</b>；同一组同一岗位建议只由 1 人担任，出现重复会标红提醒，请组内先协调。</p>
       </div>
       <button class="btn" id="copyRoles" type="button">复制分工表</button>
@@ -380,15 +393,6 @@
     <p class="note">硬规则：②技术负责人是每组唯一的“技术位”，演示路径、一键启动、部署说明都由他兜底；①队长负责对外与上台，不要兼技术；③④是非技术位。岗位以每个人在提交表里实际选择的为准，11.29 按最后一列验收交付物。</p>
   </section>
 
-  <section class="section" id="topics">
-    <div class="section-head">
-      <div>
-        <div class="section-title"><span class="num">05</span><h2>候选题材参考</h2></div>
-        <p class="section-sub">点开任意一条看细节。12 个题材都写了做什么、为什么能打、最大风险、适合谁。</p>
-      </div>
-    </div>
-    <div class="topic-grid" id="topicGrid"></div>
-  </section>
 
   <footer class="foot">
     <span>贵安新区智能体应用大赛暨第三届贵阳大数据科创城创新创业应用大赛 · 创新赛道。候选题材来自参赛选题报告、3.docx、1.doc 及三份完整项目计划书。</span>
@@ -555,7 +559,7 @@ const CACHE_KEY = 'bisai-submissions-cache-v1';
 const DEADLINE = new Date('2026-11-29T23:59:59+08:00');
 const topicById = Object.fromEntries(TOPICS.map(t => [t.id, t]));
 
-const state = { submissions: [], loading: false, filter: 'all', stale: false, editingName: '' };
+const state = { submissions: [], loading: false, filter: 'all', stale: false, editingName: '', pendingTopic: '' };
 
 const $ = (s, root) => (root || document).querySelector(s);
 const $$ = (s, root) => Array.from((root || document).querySelectorAll(s));
@@ -732,11 +736,16 @@ function onNameChange(){
     $('#fTopic').value = existing.topic || '';
     $('#fReason').value = existing.reason || '';
     $('#fNote').value = existing.note || '';
+    state.pendingTopic = '';
   } else {
     $('#fRole').value = '';
     $('#fTopic').value = '';
     $('#fReason').value = '';
     $('#fNote').value = '';
+    if (state.pendingTopic) {
+      $('#fTopic').value = state.pendingTopic;
+      state.pendingTopic = '';
+    }
   }
   setFormMode(name);
   updateRoleHint();
@@ -750,6 +759,7 @@ function resetForm(){
   $('#fReason').value = '';
   $('#fNote').value = '';
   state.editingName = '';
+  state.pendingTopic = '';
   updateGroup('');
   setFormMode('');
   updateRoleHint();
@@ -867,7 +877,10 @@ function renderTopics(){
       <p class="tagline">${esc(t.tagline)}</p>
       <div class="card-foot">
         <span class="picked" data-pick="${t.id}">暂无人选</span>
-        <button class="detail-btn" type="button" aria-expanded="false">细节 <span class="chev">▾</span></button>
+        <span class="card-actions">
+          <button class="pick-btn" type="button" data-pick-topic="${t.id}">选这个</button>
+          <button class="detail-btn" type="button" aria-expanded="false">细节 <span class="chev">▾</span></button>
+        </span>
       </div>
       <div class="card-detail">
         <div><b>做什么</b><p>${esc(t.do)}</p></div>
@@ -1092,7 +1105,7 @@ function updateCountdown(){
 function bindEvents(){
   $('#fName').addEventListener('change', onNameChange);
   $('#fRole').addEventListener('change', updateRoleHint);
-  $('#fTopic').addEventListener('change', updateTopicHint);
+  $('#fTopic').addEventListener('change', () => { state.pendingTopic = ''; updateTopicHint(); });
   $('#fReason').addEventListener('input', updateReasonCount);
   $('#submitForm').addEventListener('submit', onSubmit);
   $('#resetEdit').addEventListener('click', resetForm);
@@ -1130,6 +1143,20 @@ function bindEvents(){
   });
 
   $('#topicGrid').addEventListener('click', e => {
+    const pick = e.target.closest('[data-pick-topic]');
+    if (pick) {
+      const id = pick.dataset.pickTopic;
+      state.pendingTopic = $('#fName').value ? '' : id;
+      $('#fTopic').value = id;
+      updateTopicHint();
+      $('#submit').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setTimeout(() => {
+        if (!$('#fName').value) $('#fName').focus();
+        else $('#fReason').focus();
+      }, 380);
+      toast(`已选「${topicShort(id)}」，接着填姓名和理由`);
+      return;
+    }
     const btn = e.target.closest('.detail-btn');
     if (!btn) return;
     const card = btn.closest('.topic-card');
