@@ -600,10 +600,27 @@ function mdCell(v){
 }
 
 /* ---------- API ---------- */
+function sleep(ms){ return new Promise(res => setTimeout(res, ms)); }
+async function getStore(){
+  let lastErr = null;
+  for (let i = 0; i < 4; i++) {
+    let r = null;
+    try {
+      r = await fetch(API, { cache: 'no-store' });
+    } catch (e) {
+      lastErr = e;
+    }
+    if (r) {
+      if (r.ok) return await r.json();
+      lastErr = new Error('HTTP ' + r.status);
+      if (r.status !== 405 && r.status !== 429 && r.status < 500) throw lastErr;
+    }
+    await sleep(500 * (i + 1));
+  }
+  throw lastErr || new Error('网络连接失败');
+}
 async function loadSubmissions(){
-  const r = await fetch(API + '?t=' + Date.now(), { cache: 'no-store' });
-  if (!r.ok) throw new Error('HTTP ' + r.status);
-  const j = await r.json();
+  const j = await getStore();
   const list = j && j.data && Array.isArray(j.data.submissions) ? j.data.submissions : [];
   return list
     .filter(s => s && typeof s.name === 'string')
@@ -622,13 +639,30 @@ async function persistSubmission(entry){
     const list = await loadSubmissions();
     const i = list.findIndex(s => s.name === entry.name);
     if (i >= 0) list[i] = entry; else list.push(entry);
-    const r = await fetch(API, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: 'bisai-topic-store', data: { submissions: list } })
-    });
-    if (!r.ok) throw new Error('写入失败 HTTP ' + r.status);
-    await new Promise(res => setTimeout(res, 350));
+
+    let saved = false;
+    let lastErr = null;
+    for (let retry = 0; retry < 4; retry++) {
+      let r = null;
+      try {
+        r = await fetch(API, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: 'bisai-topic-store', data: { submissions: list } })
+        });
+      } catch (e) {
+        lastErr = e;
+      }
+      if (r) {
+        if (r.ok) { saved = true; break; }
+        lastErr = new Error('HTTP ' + r.status);
+        if (r.status !== 405 && r.status !== 429 && r.status < 500) throw lastErr;
+      }
+      await sleep(600 * (retry + 1));
+    }
+    if (!saved) throw lastErr || new Error('写入失败');
+
+    await sleep(400);
     const check = await loadSubmissions();
     const hit = check.find(s => s.name === entry.name && s.topic === entry.topic && s.reason === entry.reason && s.role === entry.role);
     if (hit) return check;
@@ -936,12 +970,12 @@ async function refresh(showErrorToast){
   } catch (e) {
     state.stale = true;
     if (!state.submissions.length) state.submissions = readCache();
-    $('#syncState').textContent = '同步失败，显示缓存';
+    $('#syncState').textContent = '网络波动，先用缓存';
     $('#boardSub').textContent = '读取云端失败，下面可能是上次缓存；点“刷新”重试。';
     $('#boardNote').classList.add('warn');
-    $('#boardNote').textContent = `读取失败：${e.message}。如果一直失败，先把填写内容发群里，或稍后重试。`;
+    $('#boardNote').textContent = `网络波动（${e.message}），已先用缓存显示；页面会自动重试，也可以点“刷新”。`;
     renderAll();
-    if (showErrorToast) toast('同步失败，请稍后重试');
+    if (showErrorToast) toast('网络波动，稍后自动重试');
   } finally {
     state.loading = false;
     $('#refreshBtn').disabled = false;
@@ -1183,7 +1217,7 @@ function init(){
   updateReasonCount();
   updateCountdown();
   setInterval(updateCountdown, 60000);
-  setInterval(() => { if (!document.hidden) refresh(false); }, 30000);
+  setInterval(() => { if (!document.hidden) refresh(false); }, 60000);
   refresh(false);
 }
 init();
