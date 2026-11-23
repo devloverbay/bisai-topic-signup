@@ -1,0 +1,908 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>比赛选题登记表 · 贵安新区智能体应用大赛</title>
+<style>
+  :root{
+    --paper:#f4f0e6;
+    --paper-2:#fbf8f0;
+    --ink:#17231d;
+    --muted:#6b7268;
+    --line:#d8d3c4;
+    --jade:#1d5c49;
+    --jade-2:#2f7a61;
+    --red:#c2452d;
+    --amber:#a9741b;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    color:var(--ink);
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+    font-size:15px;
+    line-height:1.65;
+    background-color:var(--paper);
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(23,35,29,.055) 1px, transparent 0),
+      linear-gradient(180deg, rgba(255,255,255,.42), rgba(255,255,255,0) 320px);
+    background-size:22px 22px, 100% 100%;
+    -webkit-font-smoothing:antialiased;
+  }
+  .topline{height:5px;background:linear-gradient(90deg,var(--jade) 0 66%,var(--red) 66% 100%)}
+  .wrap{max-width:1260px;margin:0 auto;padding:0 28px}
+
+  /* ---------- Hero ---------- */
+  .hero{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:42px;padding:46px 0 30px;border-bottom:1px solid var(--line)}
+  .eyebrow{display:flex;align-items:center;gap:8px;font-size:11.5px;letter-spacing:.18em;color:var(--jade);font-weight:600}
+  .eyebrow .dot{width:6px;height:6px;background:var(--red);border-radius:50%;display:inline-block}
+  h1{font-family:"Songti SC","Noto Serif SC","SimSun",serif;font-size:clamp(38px,5vw,62px);line-height:1.08;margin:14px 0 14px;font-weight:700;letter-spacing:-.025em}
+  .lede{font-size:15.5px;color:#596056;max-width:680px;margin:0}
+  .lede b{color:var(--ink)}
+  .hero-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
+  .chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:12px;background:rgba(251,248,240,.7);color:#5c635a}
+  .chip.accent{background:var(--jade);border-color:var(--jade);color:#fff}
+  .chip.urgent{background:#f7e7e1;border-color:#e4bfb3;color:var(--red);font-weight:600}
+  .hero-side{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);align-self:end}
+  .stat{background:rgba(251,248,240,.92);padding:18px 10px;text-align:center}
+  .stat b{display:block;font-family:"Songti SC","Noto Serif SC",serif;font-size:25px;line-height:1.15;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .stat span{font-size:10.5px;color:var(--muted);letter-spacing:.06em}
+
+  /* ---------- How to ---------- */
+  .howto{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:26px}
+  .step{background:rgba(251,248,240,.92);padding:15px 18px;display:flex;gap:12px;align-items:flex-start}
+  .step b{font-family:"Songti SC",serif;font-size:20px;color:var(--red);line-height:1.2;min-width:24px}
+  .step p{margin:0;font-size:12.5px;color:#5c635a;line-height:1.65}
+  .step p strong{display:block;color:var(--ink);font-size:13px;margin-bottom:1px}
+
+  /* ---------- Section ---------- */
+  .section{padding:44px 0 6px}
+  .section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:18px;flex-wrap:wrap}
+  .section-title{display:flex;align-items:baseline;gap:12px}
+  .num{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;color:var(--red);letter-spacing:.1em}
+  h2{font-family:"Songti SC","Noto Serif SC",serif;font-size:27px;margin:0;letter-spacing:-.01em;font-weight:700}
+  .section-sub{color:var(--muted);font-size:12.5px;margin:5px 0 0;max-width:760px}
+  .section-sub b{color:var(--ink)}
+
+  /* ---------- Filters ---------- */
+  .filters{display:flex;gap:6px;flex-wrap:wrap}
+  .filter{border:1px solid var(--line);background:transparent;padding:6px 12px;font-size:12px;border-radius:999px;cursor:pointer;color:var(--muted);font-family:inherit;transition:.15s}
+  .filter:hover{border-color:#afa896;color:var(--ink)}
+  .filter.active{background:var(--ink);color:var(--paper-2);border-color:var(--ink)}
+
+  /* ---------- Topic cards ---------- */
+  .topic-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+  .topic-card{background:rgba(251,248,240,.94);border:1px solid var(--line);padding:17px 18px 13px;display:flex;flex-direction:column;min-height:214px;transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;position:relative}
+  .topic-card:hover{transform:translateY(-2px);border-color:#b8b19f;box-shadow:0 10px 26px rgba(23,35,29,.07)}
+  .topic-card.has-pick{border-color:#8fb3a4;box-shadow:inset 3px 0 0 var(--jade)}
+  .card-top{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+  .idx{font-family:"Songti SC",serif;font-size:12.5px;color:#a8a294;letter-spacing:.08em}
+  .cat{font-size:10.5px;color:var(--jade);background:rgba(29,92,73,.08);padding:2px 8px;border-radius:3px;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%}
+  .score{margin-left:auto;font-size:11px;color:var(--red);font-weight:600;white-space:nowrap}
+  .topic-card h3{font-size:18.5px;margin:0 0 7px;line-height:1.3;font-family:"Songti SC","Noto Serif SC",serif;font-weight:700}
+  .topic-card h3 small{display:block;font-size:11.5px;color:var(--muted);font-family:inherit;font-weight:400;margin-top:3px;letter-spacing:.02em;line-height:1.45}
+  .tagline{font-size:13px;color:#4c534b;margin:0 0 15px;line-height:1.72}
+  .card-foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px dashed var(--line);padding-top:9px}
+  .picked{font-size:11px;color:#9a9587;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:72%}
+  .picked.on{color:var(--jade);font-weight:600}
+  .detail-btn{border:0;background:none;font-family:inherit;font-size:11.5px;color:var(--muted);cursor:pointer;padding:2px;white-space:nowrap}
+  .detail-btn:hover{color:var(--ink)}
+  .chev{font-size:9px;display:inline-block;transform:translateY(-1px)}
+  .card-detail{display:none;border-top:1px solid var(--line);margin-top:10px;padding-top:11px}
+  .topic-card.open .card-detail{display:block;animation:fade .18s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+  .card-detail div{margin-bottom:8px}
+  .card-detail b{font-size:10.5px;color:var(--red);letter-spacing:.07em;display:block;margin-bottom:2px}
+  .card-detail p{margin:0;font-size:12px;color:#5c635a;line-height:1.68}
+  .card-detail .src{font-size:10.5px;color:#a09a8c;border-top:1px dashed var(--line);padding-top:8px;margin-bottom:0;line-height:1.5}
+
+  /* ---------- Toolbar ---------- */
+  .toolbar{display:flex;gap:7px;flex-wrap:wrap}
+  .btn{border:1px solid var(--line);background:rgba(251,248,240,.8);color:var(--ink);padding:7px 13px;font-size:12.5px;font-family:inherit;cursor:pointer;border-radius:2px;transition:.15s;white-space:nowrap}
+  .btn:hover{border-color:#a9a290;background:#fff}
+  .btn.primary{background:var(--jade);border-color:var(--jade);color:#fff}
+  .btn.primary:hover{background:#174c3c;border-color:#174c3c}
+  .btn.ghost{color:#8d877a}
+  .btn.ghost:hover{color:var(--red);border-color:#dfb9ae}
+
+  /* ---------- Table ---------- */
+  .table-wrap{border:1px solid var(--line);background:rgba(251,248,240,.94);overflow-x:auto}
+  .table-head,.member-row{display:grid;grid-template-columns:40px 132px 226px minmax(240px,1fr) 186px 34px;gap:11px;align-items:start}
+  .table-head{background:#ebe6d8;border-bottom:1px solid var(--line);padding:9px 14px;font-size:10.5px;letter-spacing:.08em;color:var(--muted)}
+  .member-row{padding:13px 14px;border-bottom:1px solid var(--line);position:relative}
+  .member-row:last-child{border-bottom:0}
+  .member-row:hover{background:#fdfbf5}
+  .cell.no{font-family:"Songti SC",serif;color:#aaa494;padding-top:23px;font-size:12.5px}
+  .cell label{display:block;font-size:10.5px;color:var(--muted);letter-spacing:.04em;margin-bottom:4px}
+  .cell .opt{color:#b3ada0;font-size:9.5px;margin-left:4px}
+  input,select,textarea{width:100%;border:1px solid #d9d4c6;background:#fff;padding:7px 9px;font-family:inherit;font-size:13px;color:var(--ink);border-radius:2px;outline:none;transition:border .15s, box-shadow .15s}
+  input::placeholder,textarea::placeholder{color:#b5afa2}
+  input:focus,select:focus,textarea:focus{border-color:var(--jade);box-shadow:0 0 0 3px rgba(29,92,73,.09)}
+  textarea{resize:vertical;min-height:74px;line-height:1.6}
+  select{appearance:none;-webkit-appearance:none;padding-right:26px;background-image:linear-gradient(45deg,transparent 50%,#6b7268 50%),linear-gradient(135deg,#6b7268 50%,transparent 50%);background-position:calc(100% - 14px) 50%,calc(100% - 9px) 50%;background-size:5px 5px,5px 5px;background-repeat:no-repeat;cursor:pointer}
+  .counter{display:block;text-align:right;font-size:10px;color:#aaa494;margin-top:2px}
+  .counter.ok{color:var(--jade)}
+  .icon-btn{border:1px solid transparent;background:none;color:#aaa494;font-size:19px;cursor:pointer;width:28px;height:28px;border-radius:50%;line-height:1;margin-top:17px;font-family:inherit}
+  .icon-btn:hover{background:#f3e3de;color:var(--red)}
+  .table-foot{display:flex;justify-content:space-between;gap:12px;padding:9px 2px 0;font-size:11px;color:#928c7e;flex-wrap:wrap}
+  #saveState{color:var(--jade);font-weight:600}
+  #todoState.warn{color:var(--amber);font-weight:600}
+
+  /* ---------- Summary ---------- */
+  .summary-meta{font-size:12px;color:var(--muted);margin:-4px 0 12px}
+  .summary-meta b{color:var(--ink)}
+  .summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .summary-card{border:1px solid var(--line);background:rgba(251,248,240,.94);padding:15px 17px}
+  .summary-top{display:flex;align-items:baseline;gap:10px}
+  .summary-top h3{font-size:15.5px;margin:0;flex:1;font-family:"Songti SC","Noto Serif SC",serif}
+  .votes{font-size:11.5px;color:var(--jade);font-weight:700;white-space:nowrap}
+  .votes b{font-size:19px;font-family:"Songti SC",serif;margin-right:2px}
+  .bar{height:5px;background:#e7e2d5;margin:9px 0 11px;overflow:hidden}
+  .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--jade),#559b80);width:0;transition:width .45s ease}
+  .picks{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+  .picks li{font-size:12px;color:#5c635a;padding-left:11px;position:relative;line-height:1.65}
+  .picks li:before{content:"";width:4px;height:4px;background:var(--red);border-radius:50%;position:absolute;left:0;top:7px}
+  .picks b{color:var(--ink);margin-right:5px}
+  .picks .no-reason{color:#a9a396;font-style:normal}
+  .empty{border:1px dashed var(--line);padding:30px 20px;text-align:center;color:#9a9486;font-size:13px;background:rgba(251,248,240,.55)}
+  .empty b{display:block;font-family:"Songti SC",serif;font-size:17px;color:#6b7268;margin-bottom:4px}
+
+  /* ---------- Footer / misc ---------- */
+  .foot{border-top:1px solid var(--line);margin-top:46px;padding:20px 0 38px;display:flex;justify-content:space-between;gap:18px;color:#9a9486;font-size:11px;flex-wrap:wrap}
+  .foot span{max-width:760px}
+  #toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,16px);background:var(--ink);color:#fff;padding:9px 17px;border-radius:3px;font-size:12.5px;opacity:0;pointer-events:none;transition:.2s;z-index:100;max-width:calc(100vw - 40px)}
+  #toast.show{opacity:1;transform:translate(-50%,0)}
+  dialog{border:1px solid var(--line);background:var(--paper-2);color:var(--ink);max-width:570px;width:calc(100vw - 40px);padding:25px 27px;border-radius:3px;box-shadow:0 24px 70px rgba(0,0,0,.22)}
+  dialog::backdrop{background:rgba(23,35,29,.46)}
+  dialog h3{margin:0 0 8px;font-family:"Songti SC",serif;font-size:22px}
+  dialog p{font-size:13px;color:#5c635a;margin:0 0 12px}
+  dialog ol{padding-left:19px;font-size:13px;line-height:1.85;color:#4c534b;margin:0 0 12px}
+  dialog li{margin-bottom:5px}
+  dialog code{background:#eee9dc;padding:1px 5px;border-radius:2px;font-size:12px}
+  .dialog-note{background:#f2eee3;border-left:3px solid var(--amber);padding:9px 11px;font-size:12px;color:#6b6253;margin:0 0 16px}
+  .dl{color:var(--jade);font-weight:600;font-size:13px;text-decoration:none;border-bottom:1px solid #9dbfb0}
+  .dialog-actions{display:flex;justify-content:flex-end}
+
+  @media (max-width:1060px){
+    .hero{grid-template-columns:1fr;gap:26px}
+    .hero-side{max-width:440px}
+    .topic-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .table-head,.member-row{grid-template-columns:36px 112px 200px minmax(220px,1fr) 160px 32px;gap:9px}
+  }
+  @media (max-width:820px){
+    .wrap{padding:0 18px}
+    .howto{grid-template-columns:1fr}
+    .summary-grid{grid-template-columns:1fr}
+    .table-head{display:none}
+    .member-row{grid-template-columns:1fr 1fr;gap:10px;padding:15px 14px}
+    .cell.no{display:none}
+    .cell.reason,.cell.note{grid-column:1/-1}
+    .cell.del{position:absolute;top:9px;right:9px}
+    .icon-btn{margin:0}
+    .cell label{padding-right:0}
+    .cell.topic label,.cell.name label{padding-right:30px}
+  }
+  @media (max-width:620px){
+    .hero{padding-top:32px}
+    .section{padding-top:34px}
+    .topic-grid{grid-template-columns:1fr}
+    .member-row{grid-template-columns:1fr}
+    .cell.reason,.cell.note{grid-column:auto}
+    .cell.name label,.cell.topic label{padding-right:34px}
+    .section-head{align-items:flex-start}
+    .toolbar{width:100%}
+    .stat{padding:14px 6px}
+    .stat b{font-size:18px}
+    .stat span{font-size:9.5px}
+  }
+  @media print{
+    body{background:#fff}
+    .topline,.filters,.toolbar,.detail-btn,.card-detail,.icon-btn,.table-foot,#shareBtn,.howto,.foot,#toast{display:none!important}
+    .topic-card,.summary-card,.table-wrap{break-inside:avoid;box-shadow:none}
+    .section{padding:18px 0 0}
+    input,select,textarea{border:0;background:transparent;padding:0;box-shadow:none}
+    .member-row{padding:8px 0}
+  }
+</style>
+</head>
+<body>
+<div class="topline"></div>
+<div class="wrap">
+
+  <header class="hero">
+    <div>
+      <div class="eyebrow"><span class="dot"></span> 贵安新区智能体应用大赛 · 创新赛道</div>
+      <h1>比赛选题登记表</h1>
+      <p class="lede">每人选一份题材，写清<b>“为什么是它”</b>。填完自动保存在本机，可一键导出 CSV、复制汇总发群里；也可以把同目录的 Excel 模板导入腾讯文档，变成真正多人协作的在线表格。</p>
+      <div class="hero-meta">
+        <span class="chip accent">报名截止 2026.11.29</span>
+        <span class="chip" id="countdown">距截止 — 天</span>
+        <span class="chip">每队 ≤ 5 人 · 成员最多参与 2 个项目</span>
+      </div>
+    </div>
+    <div class="hero-side" aria-label="登记概览">
+      <div class="stat"><b id="statFilled">0</b><span>已登记</span></div>
+      <div class="stat"><b id="statTopics">0</b><span>覆盖题材</span></div>
+      <div class="stat"><b id="statTop">—</b><span>当前最热</span></div>
+    </div>
+  </header>
+
+  <div class="howto" aria-label="填写步骤">
+    <div class="step"><b>01</b><p><strong>填姓名</strong>一行一个人，队内按“队长 / 成员”顺序填。</p></div>
+    <div class="step"><b>02</b><p><strong>选一份题材</strong>下拉框按“完整方案 / 新题材 / 技术脑洞 / 文化职教”分组。</p></div>
+    <div class="step"><b>03</b><p><strong>写理由</strong>建议 60 字以上：能赢的点、你能承担的部分、你担心的风险。</p></div>
+  </div>
+
+  <section class="section" id="topics">
+    <div class="section-head">
+      <div>
+        <div class="section-title"><span class="num">01</span><h2>候选题材</h2></div>
+        <p class="section-sub">点卡片右下角<b>“细节”</b>展开：做什么、为什么能打、最大风险、适合谁。推荐指数是综合“评委共鸣、技术可讲、6 天可行、出片、不撞题”后的主观判断。</p>
+      </div>
+      <div class="filters" id="filters" role="group" aria-label="筛选题材">
+        <button class="filter active" data-filter="all" type="button">全部</button>
+        <button class="filter" data-filter="full" type="button">已有完整材料</button>
+        <button class="filter" data-filter="new" type="button">重点新题材</button>
+        <button class="filter" data-filter="tech" type="button">技术脑洞</button>
+        <button class="filter" data-filter="culture" type="button">文化 · 职教</button>
+      </div>
+    </div>
+    <div class="topic-grid" id="topicGrid"></div>
+  </section>
+
+  <section class="section" id="signup">
+    <div class="section-head">
+      <div>
+        <div class="section-title"><span class="num">02</span><h2>成员登记</h2></div>
+        <p class="section-sub">理由别写“感兴趣”“想试试”。写三句话就够：<b>它凭什么赢 / 我能负责哪块 / 最大风险怎么兜底</b>。</p>
+      </div>
+      <div class="toolbar">
+        <button class="btn primary" id="addRow" type="button">＋ 添加成员</button>
+        <button class="btn" id="exportCsv" type="button">导出 CSV</button>
+        <button class="btn" id="copyMd" type="button">复制汇总</button>
+        <button class="btn" id="printPage" type="button">打印 / PDF</button>
+        <button class="btn ghost" id="reset" type="button">清空</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <div class="table-head" aria-hidden="true">
+        <div>#</div><div>姓名</div><div>选择题材</div><div>选择理由（≥ 60 字更好）</div><div>风险 / 分工补充</div><div></div>
+      </div>
+      <div id="rows"></div>
+    </div>
+    <div class="table-foot">
+      <span id="saveState">准备就绪</span>
+      <span id="todoState">从第一行开始填即可</span>
+      <span>数据只存在本机浏览器；换电脑前请先导出 CSV。</span>
+    </div>
+  </section>
+
+  <section class="section" id="summary">
+    <div class="section-head">
+      <div>
+        <div class="section-title"><span class="num">03</span><h2>选题汇总</h2></div>
+        <p class="section-sub">每选一个题材，这里会自动出现票数和理由。复制汇总后可直接贴到微信群 / 答辩材料里。</p>
+      </div>
+      <button class="btn" id="shareBtn" type="button">怎么变成在线表格？</button>
+    </div>
+    <div id="summaryBox"></div>
+  </section>
+
+  <footer class="foot">
+    <span>贵安新区智能体应用大赛暨第三届贵阳大数据科创城创新创业应用大赛 · 创新赛道选题登记。候选题材来自 <code>参赛选题报告-创新赛道.docx</code>、<code>3.docx</code>、<code>1.doc</code> 及三份完整项目计划书。</span>
+    <span>本页无后端，填写内容保存在浏览器 localStorage。</span>
+  </footer>
+</div>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<dialog id="shareDialog">
+  <h3>怎么变成“在线表格”</h3>
+  <p>这个网页可以直接填写。要让全组用同一个链接，任选一种：</p>
+  <ol>
+    <li><b>最快，1 分钟：</b>打开 <code>app.netlify.com/drop</code>，把 <code>选题登记表.html</code> 拖进去，把生成的链接发到群里。</li>
+    <li><b>国内访问稳：</b>上传到 Gitee 仓库并开启 Gitee Pages；或放到学校 / 单位的服务器上。</li>
+    <li><b>要多人同时写进同一张表：</b>把同目录的 <code>选题登记表-模板.xlsx</code> 导入腾讯文档 / 飞书，开启“可编辑”分享。这是最稳妥的收集方式。</li>
+  </ol>
+  <p class="dialog-note">注意：网页版的填写内容默认只保存在每个人自己的浏览器里，不会自动汇总到服务器。收集时让大家点“复制汇总”发群里，或导出 CSV 后合并。</p>
+  <p><a class="dl" href="template.xlsx" download>↓ 下载 Excel 模板（可直接导入腾讯文档 / 飞书）</a></p>
+  <div class="dialog-actions"><button class="btn primary" id="closeShare" type="button">知道了</button></div>
+</dialog>
+
+<script>
+/* ============================================================
+   候选题材数据：想改文案或增删题材，直接改这个数组即可。
+   group: full=已有完整材料 / new=重点新题材 / tech=技术脑洞 / culture=文化·职教
+   ============================================================ */
+const TOPICS = [
+  {
+    id:'shentang', no:'01', group:'full', cat:'智能体安全 · 行业赋能',
+    name:'审堂', sub:'多智能体对抗式合规审计', short:'审堂 · 合规审计', score:4.5,
+    tagline:'红队找茬、蓝队辩护、法官裁决，把“看一眼就下结论”的审查变成有举证、有裁决、可追溯的对抗流程。',
+    do:'材料生成方出材料 → 合规红队穷举问题并承担举证 → 辩护蓝队逐条应诉、认错并给修改方案 → 法官按“成立 / 不成立 / 证据不足”三态裁决 → 输出带三方记录的审计报告。',
+    why:'现场能看到三个 AI“吵起来”，冲突感和记忆点极强；换一套红队规则库就能切合同、报销、代码、申报材料；Dify/Coze + AutoGen 一周可跑通一个场景。',
+    risk:'最容易被问“是不是提示词套壳”。要准备评测集，用漏检率、误报率、人工复核量三组数字回答。',
+    fit:'逻辑强、会写提示词和评测的人；已有完整计划书，改造成本低。',
+    source:'审堂_红蓝对抗合规审计智能体_项目计划书.docx'
+  },
+  {
+    id:'qiansuan', no:'02', group:'full', cat:'行业赋能 · 算力基础设施',
+    name:'黔算慧眼', sub:'算力机房运维多智能体', short:'黔算慧眼 · 机房运维', score:5,
+    tagline:'让机房新人 30 秒拿到告警处置单，把老工程师脑子里的经验沉淀成可复用的知识资产。',
+    do:'告警聚合 → 跨系统根因定位 → 处置步骤与变更风险提示 → 工单复盘 → 知识沉淀；感知、诊断、处置、知识四类智能体分工协作。',
+    why:'贵安算力是主办方的产业底牌，评委共鸣最高；有 27 个大型数据中心、170.15 EFLOPS 等真实数据可引用；可讲国产化昇腾、私有化部署、数据不出域。',
+    risk:'拿不到真实机房数据。用公开运维手册 + 合成告警讲清方法可迁移，别把假设指标说成实测。',
+    fit:'会做 RAG、工单闭环、愿意贴产业叙事的人；已有完整产品设计报告。',
+    source:'黔算慧眼_算力机房运维智能体_产品设计报告_.docx'
+  },
+  {
+    id:'shanqu', no:'03', group:'full', cat:'行业赋能 · 公共安全',
+    name:'山区应急通信', sub:'野外应急通信辅助智能体', short:'山区应急通信 · 野外组网', score:4,
+    tagline:'把“对讲机喊不到”翻译成能照着做的组网方案：算得准、排得快、收尾还能自动成稿。',
+    do:'听懂现场口语 → 选设备 / 定频点 / 定架设点 → 用工具算链路预算与可用距离 → 按现象分步排查 → 生成现场简报与值守记录。',
+    why:'贵州山多、公网盲区多，场景真实且评委一听就懂；工具计算把“聊天机器人”和“现场参谋”分开；一条链路覆盖“方案—排查—成稿”，闭环完整。',
+    risk:'需要通信专业背书；现场案例不足会被追问准确率。把“实测 / 估算”标清楚，模糊场景主动转人工。',
+    fit:'有通信、应急、林场或乡镇资源的人；已有完整计划书。',
+    source:'山区野外应急通信辅助智能体-项目计划书.docx'
+  },
+  {
+    id:'wuma', no:'04', group:'new', cat:'行业赋能 · 端侧智能',
+    name:'五码 FiveCode', sub:'端侧智能体引擎', short:'五码 FiveCode · 端侧引擎', score:5,
+    tagline:'大模型每次只输出 5 个字符，老电脑上的 1B 小模型负责干活——token 省约 70%，断网也能跑。',
+    do:'云端大模型出动作码 → 本地 1B 小模型解码执行 → 读文件 / 写文件 / 跑脚本 → 坏码带错误重出，最多重试 2 次后降级纯文本。',
+    why:'文件夹里唯一“已经在跑”的原型，6 天能补齐壳和闭环；全场比模型强弱，你比“谁用的算力更少”，反向叙事抓耳；数据不出校，切中教育 / 政务合规刚需。',
+    risk:'编码歧义、嵌套参数解析、小模型偶尔跑偏。用真实用例通过率说话，主动摆短板并给出兜底方案。',
+    fit:'已有代码原型、想稳交付的 2 人小队；和“码笼”共用码表，可互相背书。',
+    source:'3.docx · 项目一改造'
+  },
+  {
+    id:'malong', no:'05', group:'new', cat:'智能体安全',
+    name:'码笼 CodeCage', sub:'智能体权限沙箱', short:'码笼 CodeCage · 权限沙箱', score:5,
+    tagline:'给那些已经会自己点鼠标、发邮件的 AI 员工，装一套行车记录仪加刹车。',
+    do:'动作白名单（码表即权限）→ 删库 / 批量导出 / 对外发送强制人工确认 → 每次尝试生成可复盘审计链 → 红队用例持续抽检。',
+    why:'安全方向独立评审、赛道冷门，同样水平更容易出头；和五码共用压缩码表，技术复用度高；演示“注入—拦截—审计”反差极强。',
+    risk:'可能被质疑“不是应用”。定位为智能体上架 / 运行时的安全基础设施，收费逻辑是审核 + 持续监测。',
+    fit:'有安全或后端功底、想赌一等奖的 2 人组；与选题报告里的“防线”同一方向，二选一。',
+    source:'3.docx · 新题材一；参赛选题报告 H 防线'
+  },
+  {
+    id:'zhaian', no:'06', group:'new', cat:'公共数据 · 基层治理',
+    name:'寨安', sub:'村寨消防智能体', short:'寨安 · 村寨消防', score:4.5,
+    tagline:'拍一张村寨照片，标出会起火的电线、被堵的通道，再用方言喊老人往哪跑。',
+    do:'图像识别隐患（私拉电线 / 柴草堆放 / 通道占用 / 灭火器缺失）→ 对照农村防火规范出到户整改单 → 按老人儿童分布生成疏散预案 → 方言语音广播。',
+    why:'木质连片村寨、通道窄、留守老人多，是贵州真实痛点；隐患框、路线图、方言广播全是画面；同时踩中地方场景、公共安全、政府买单。',
+    risk:'识别准确率会被追着问。定位为辅助巡检与初筛，模糊样本主动说“看不清，请人工复核”，反而成容错加分项。',
+    fit:'有村寨、消防、乡镇实地资源的人优先；6 天可做轻量版。',
+    source:'3.docx · 新题材二'
+  },
+  {
+    id:'paiyun', no:'07', group:'new', cat:'行业赋能 · 校园',
+    name:'排云', sub:'实验室 / 场地冲突调度', short:'排云 · 场地调度', score:4,
+    tagline:'两个班抢同一间实验室，30 秒给出三个可执行方案，并自动改期、通知、出确认单。',
+    do:'查询 Agent 读课表 / 场地 / 设备 → 仲裁 Agent 按“课程优先、毕业班优先、已审批优先”给三方案 → 通知 Agent 改期发通知、生成确认单。',
+    why:'教务处最常吵的架，评委都有共鸣；多 Agent 现场协商有画面；投影仪“维修中”的异常分支直接对应容错评分。',
+    risk:'要从零搭，且数据必须真（真教室号、真课程名）；建议只留“抢实验室”一个闭环，别做办会全链路。',
+    fit:'3 人以上、有人会前端 / 后端；可与五码合并成“断网能排课、数据不出校”的完整故事。',
+    source:'3.docx · 项目二改造'
+  },
+  {
+    id:'guang', no:'08', group:'tech', cat:'行业赋能 · GUI Agent',
+    name:'屏幕幽灵', sub:'视觉操作型数字员工', short:'屏幕幽灵 · GUI Agent', score:3.5,
+    tagline:'给 AI 装上眼睛和手，直接看屏幕、点鼠标，操作那些根本没有接口的老系统。',
+    do:'截图理解界面 → 规划下一步动作 → 控制鼠标键盘执行 → 看结果自我反思，点错了退回重试。',
+    why:'“视觉—语言—动作”多模态闭环，技术突破明确；现场看 AI 自己操作电脑，视觉冲击最强；可重构 RPA 与自动化测试。',
+    risk:'8 天内稳定性难保证。演示环境必须锁死，异常处理提前排练；建议只做 1 个系统、1 条任务。',
+    fit:'工程能力强、敢打技术分的队伍；不建议作为唯一保底。',
+    source:'1.doc · 终极强推项目'
+  },
+  {
+    id:'shapan', no:'09', group:'tech', cat:'基层治理 · 多智能体',
+    name:'认知沙盘', sub:'隐性冲突模拟与推演', short:'认知沙盘 · 冲突推演', score:3,
+    tagline:'让 AI 扮演暴躁受害方、推诿责任方和调解员，提前推演哪种话术最容易谈崩。',
+    do:'输入纠纷背景 → 多角色带情绪博弈 → 输出高风险话术、可行调解路径与预案。',
+    why:'把 Agent 用在“人情世故”上，立意新；长程记忆和角色一致性是通用大模型做不到的；结合基层治理能把立意拔高。',
+    risk:'题材敏感、准确性要求极高，8 天难出可信案例；演示不当容易尴尬。',
+    fit:'有心理学、社工、法学背景的人；否则慎选。',
+    source:'1.doc · 项目三'
+  },
+  {
+    id:'shijian', no:'10', group:'tech', cat:'行业赋能 · 长链路',
+    name:'时间管理大师', sub:'跨系统任务编排', short:'时间管理大师 · 跨系统编排', score:3,
+    tagline:'一句“下周五办 50 人沙龙”，多个 Agent 自己订场地、发邀请、改期、处理突发。',
+    do:'场地 / 通知 / 采购 Agent 协同 → 场地被占时自动反思重规划 → 通知延期、抢备用场地 → 端到端交付。',
+    why:'长链路 + 异常自愈正是评分表要的；画面像“AI 自己把事办了”；AutoGen 几周能跑通。',
+    risk:'要接的真实系统太多，容易变成假数据演示；6 天只够做一个闭环。',
+    fit:'会 AutoGen、能狠心砍需求的人；只留“办会”一个场景。',
+    source:'1.doc · 赛博时间管理大师'
+  },
+  {
+    id:'xiujian', no:'11', group:'culture', cat:'文化 · 产业升级',
+    name:'绣见', sub:'苗绣设计智能体', short:'绣见 · 苗绣设计', score:4.5,
+    tagline:'一句话生成 3 版“真的绣得出来”的苗绣设计，附工艺单、可绣指数和溯源卡。',
+    do:'纹样知识图谱 → 约束式生成 → 可绣性评估（色数 / 细碎区域 / 针法 / 工时）→ 以图搜源与生成存证 → 电商文案。',
+    why:'文化 + 产业，评委共鸣强；现场对比“通用模型稿”和“可绣稿”，出片且不撞题；溯源卡回应文化合规。',
+    risk:'生图质量不稳定，需预生成兜底；纹样版权与民族文化的使用边界要提前说清。',
+    fit:'有设计 / 视觉能力、能拿到纹样授权的人。',
+    source:'参赛选题报告 A'
+  },
+  {
+    id:'jiangke', no:'12', group:'culture', cat:'校园 · 技能人才',
+    name:'匠课', sub:'职教实训 AI 教练', short:'匠课 · 实训教练', score:4,
+    tagline:'学生拍设备面板、说操作步骤，AI 对照岗位能力图谱逐步校验，当场拦下“漏接地线”。',
+    do:'岗位能力图谱（任务—步骤—安全红线）→ 多模态识别 → 步骤对齐校验 → 错因归因 → 复盘报告与能力雷达。',
+    why:'职教是主办方关注方向；现场“故意漏一步被当场拦下”有记忆点；识别不准时可退化为“步骤问答 + 规则校验”，仍能交付。',
+    risk:'拍图识别精度不够；只选 1 个工种做深（数控 / 电工 / 茶艺），别铺开。',
+    fit:'有职教资源或工种标准的人；贵州电子科技职业学院背景加分。',
+    source:'参赛选题报告 B'
+  }
+];
+
+const GROUPS = [
+  ['full','已有完整材料'],
+  ['new','重点新题材'],
+  ['tech','技术脑洞'],
+  ['culture','文化 · 职教']
+];
+const STORAGE_KEY = 'bisai-topic-signup-v1';
+const DEADLINE = new Date('2026-11-29T23:59:59+08:00');
+const topicById = Object.fromEntries(TOPICS.map(t => [t.id, t]));
+
+const state = { members: [] };
+let saveTimer = null;
+let toastTimer = null;
+
+/* ---------- utils ---------- */
+const $ = (s, root) => (root || document).querySelector(s);
+const $$ = (s, root) => Array.from((root || document).querySelectorAll(s));
+function esc(v){
+  return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function uid(){
+  if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  return 'm' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+function newMember(){
+  return { uid: uid(), name:'', topic:'', reason:'', note:'', updatedAt:null };
+}
+function memberById(id){
+  return state.members.find(m => m.uid === id);
+}
+function pad2(n){ return String(n).padStart(2,'0'); }
+function topicLabel(id){
+  if (!id) return '';
+  if (id === 'custom') return '其他（自定义）';
+  const t = topicById[id];
+  return t ? (t.name + ' · ' + t.sub) : id;
+}
+function fmtTime(iso){
+  if (!iso) return '';
+  try { return new Date(iso).toLocaleString('zh-CN', { hour12:false }); } catch(e){ return ''; }
+}
+function toast(msg){
+  const el = $('#toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+}
+
+/* ---------- topic cards ---------- */
+function renderTopics(){
+  const grid = $('#topicGrid');
+  grid.innerHTML = TOPICS.map(t => `
+    <article class="topic-card" data-group="${t.group}" data-id="${t.id}">
+      <div class="card-top">
+        <span class="idx">${t.no}</span>
+        <span class="cat">${esc(t.cat)}</span>
+        <span class="score" title="推荐指数">★ ${t.score}</span>
+      </div>
+      <h3>${esc(t.name)}<small>${esc(t.sub)}</small></h3>
+      <p class="tagline">${esc(t.tagline)}</p>
+      <div class="card-foot">
+        <span class="picked" data-pick="${t.id}">暂无人选</span>
+        <button class="detail-btn" type="button" aria-expanded="false">细节 <span class="chev">▾</span></button>
+      </div>
+      <div class="card-detail">
+        <div><b>做什么</b><p>${esc(t.do)}</p></div>
+        <div><b>为什么能打</b><p>${esc(t.why)}</p></div>
+        <div><b>最大风险</b><p>${esc(t.risk)}</p></div>
+        <div><b>适合谁</b><p>${esc(t.fit)}</p></div>
+        <div class="src">材料来源：${esc(t.source)}</div>
+      </div>
+    </article>
+  `).join('');
+}
+
+/* ---------- table ---------- */
+function topicOptions(selected){
+  let html = '<option value="">请选择题材…</option>';
+  GROUPS.forEach(([g, label]) => {
+    html += `<optgroup label="${label}">`;
+    TOPICS.filter(t => t.group === g).forEach(t => {
+      html += `<option value="${t.id}"${selected === t.id ? ' selected' : ''}>${t.no} ${esc(t.short || (t.name + ' · ' + t.sub))}</option>`;
+    });
+    html += '</optgroup>';
+  });
+  html += `<option value="custom"${selected === 'custom' ? ' selected' : ''}>其他 / 自定义（请在理由开头写题材名）</option>`;
+  return html;
+}
+
+function renderRows(){
+  const rows = $('#rows');
+  rows.innerHTML = state.members.map((m, i) => `
+    <div class="member-row" data-uid="${m.uid}">
+      <div class="cell no">${pad2(i + 1)}</div>
+      <div class="cell name">
+        <label for="name-${m.uid}">姓名</label>
+        <input id="name-${m.uid}" data-field="name" value="${esc(m.name)}" placeholder="请输入" autocomplete="off">
+      </div>
+      <div class="cell topic">
+        <label for="topic-${m.uid}">选择题材</label>
+        <select id="topic-${m.uid}" data-field="topic">${topicOptions(m.topic)}</select>
+      </div>
+      <div class="cell reason">
+        <label for="reason-${m.uid}">选择理由 <span class="opt">它凭什么赢 / 我负责哪块 / 风险怎么兜底</span></label>
+        <textarea id="reason-${m.uid}" data-field="reason" rows="3" placeholder="例：它把贵州真实痛点做成了可演示的闭环；我能负责工具函数和知识库；担心现场数据不足，但可以用公开规范和自测用例兜底。">${esc(m.reason)}</textarea>
+        <span class="counter${m.reason.trim().length >= 60 ? ' ok' : ''}" data-counter>${m.reason.trim().length} 字</span>
+      </div>
+      <div class="cell note">
+        <label for="note-${m.uid}">风险 / 分工补充 <span class="opt">选填</span></label>
+        <input id="note-${m.uid}" data-field="note" value="${esc(m.note)}" placeholder="你负责哪块？担心什么？" autocomplete="off">
+      </div>
+      <div class="cell del">
+        <button class="icon-btn" data-action="delete" type="button" title="删除这一行" aria-label="删除这一行">×</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ---------- derived views ---------- */
+function filledMembers(){
+  return state.members.filter(m => m.name.trim() && m.topic);
+}
+function updateStats(){
+  const filled = filledMembers();
+  const counts = new Map();
+  filled.forEach(m => counts.set(m.topic, (counts.get(m.topic) || 0) + 1));
+  $('#statFilled').textContent = filled.length;
+  $('#statTopics').textContent = counts.size;
+  let top = '—', topN = 0;
+  counts.forEach((n, id) => {
+    if (n > topN) { topN = n; top = (topicById[id] || {}).name || (id === 'custom' ? '其他' : id); }
+  });
+  $('#statTop').textContent = top;
+  $('#statTop').title = topN ? (top + ' · ' + topN + ' 票') : '还没有人选题';
+}
+function updatePicks(){
+  TOPICS.forEach(t => {
+    const names = state.members
+      .filter(m => m.topic === t.id && m.name.trim())
+      .map(m => m.name.trim());
+    const el = document.querySelector(`[data-pick="${t.id}"]`);
+    if (!el) return;
+    el.textContent = names.length
+      ? (names.slice(0, 3).join('、') + (names.length > 3 ? ' 等 ' + names.length + ' 人' : '') + ' 已选')
+      : '暂无人选';
+    el.classList.toggle('on', names.length > 0);
+    const card = el.closest('.topic-card');
+    if (card) card.classList.toggle('has-pick', names.length > 0);
+  });
+}
+function updateTodo(){
+  const touched = state.members.filter(m => m.name.trim() || m.topic || m.reason.trim() || m.note.trim());
+  const complete = touched.filter(m => m.name.trim() && m.topic && m.reason.trim().length >= 10);
+  const todo = touched.length - complete.length;
+  const el = $('#todoState');
+  if (!touched.length) {
+    el.textContent = '从第一行开始填即可';
+    el.classList.remove('warn');
+  } else if (todo > 0) {
+    el.textContent = `还有 ${todo} 行待补全（姓名 / 题材 / 理由）`;
+    el.classList.add('warn');
+  } else {
+    el.textContent = '全部填好了，可以导出';
+    el.classList.remove('warn');
+  }
+}
+function renderSummary(){
+  const box = $('#summaryBox');
+  const filled = filledMembers();
+  if (!filled.length) {
+    box.innerHTML = `<div class="empty"><b>还没有人选题</b>填完上面的表格，这里会自动生成票数、理由和汇总。</div>`;
+    return;
+  }
+  const groups = new Map();
+  filled.forEach(m => {
+    if (!groups.has(m.topic)) groups.set(m.topic, []);
+    groups.get(m.topic).push(m);
+  });
+  const order = id => {
+    if (id === 'custom') return 999;
+    return TOPICS.findIndex(t => t.id === id);
+  };
+  const arr = Array.from(groups.entries()).sort((a, b) => b[1].length - a[1].length || order(a[0]) - order(b[0]));
+  const max = Math.max(...arr.map(x => x[1].length));
+  const total = filled.length;
+  box.innerHTML = `
+    <div class="summary-meta"><b>${total}</b> 人已选，覆盖 <b>${arr.length}</b> 个题材；按票数排序。</div>
+    <div class="summary-grid">
+      ${arr.map(([id, list]) => {
+        const t = topicById[id];
+        const title = t ? (t.name + ' · ' + t.sub) : (id === 'custom' ? '其他（自定义）' : id);
+        return `
+          <div class="summary-card">
+            <div class="summary-top">
+              <h3>${esc(title)}</h3>
+              <span class="votes"><b>${list.length}</b> 票</span>
+            </div>
+            <div class="bar"><i style="width:${Math.max(10, Math.round(list.length / max * 100))}%"></i></div>
+            <ul class="picks">
+              ${list.map(m => `<li><b>${esc(m.name.trim() || '未署名')}</b>${m.reason.trim() ? esc(m.reason.trim()) : '<span class="no-reason">（暂未填写理由）</span>'}</li>`).join('')}
+            </ul>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+}
+function updateAll(){
+  updateStats();
+  updatePicks();
+  updateTodo();
+  renderSummary();
+}
+
+/* ---------- save / load ---------- */
+function setSaveState(text){
+  $('#saveState').textContent = text;
+}
+function saveNow(){
+  clearTimeout(saveTimer);
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ v: 1, members: state.members, updatedAt: new Date().toISOString() }));
+    setSaveState('已自动保存 ' + new Date().toLocaleTimeString('zh-CN', { hour:'2-digit', minute:'2-digit' }));
+  } catch (e) {
+    setSaveState('浏览器未允许本地保存，请及时导出 CSV');
+  }
+}
+function scheduleSave(){
+  setSaveState('正在保存…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveNow, 380);
+}
+function loadState(){
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const data = JSON.parse(raw);
+      if (data && Array.isArray(data.members) && data.members.length) {
+        state.members = data.members.map(m => ({
+          uid: m.uid || uid(),
+          name: typeof m.name === 'string' ? m.name : '',
+          topic: typeof m.topic === 'string' ? m.topic : '',
+          reason: typeof m.reason === 'string' ? m.reason : '',
+          note: typeof m.note === 'string' ? m.note : '',
+          updatedAt: m.updatedAt || null
+        }));
+        setSaveState('已恢复上次填写');
+        return;
+      }
+    }
+  } catch (e) { /* ignore broken storage */ }
+  state.members = Array.from({ length: 5 }, newMember);
+  setSaveState('准备就绪');
+}
+
+/* ---------- CSV / markdown ---------- */
+function csvCell(v){
+  return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+}
+function downloadCsv(){
+  const rows = [['序号', '姓名', '选择题材', '选择理由', '风险 / 分工补充', '最后修改']];
+  state.members.forEach((m, i) => {
+    if (!m.name.trim() && !m.topic && !m.reason.trim() && !m.note.trim()) return;
+    rows.push([i + 1, m.name.trim(), topicLabel(m.topic), m.reason.trim(), m.note.trim(), fmtTime(m.updatedAt)]);
+  });
+  const csv = '\ufeff' + rows.map(r => r.map(csvCell).join(',')).join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const d = new Date();
+  a.href = url;
+  a.download = `比赛选题登记表_${d.getFullYear()}${pad2(d.getMonth() + 1)}${pad2(d.getDate())}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  const touched = state.members.filter(m => m.name.trim() || m.topic || m.reason.trim() || m.note.trim()).length;
+  const complete = state.members.filter(m => m.name.trim() && m.topic && m.reason.trim().length >= 10).length;
+  toast(complete < touched ? `已导出；还有 ${touched - complete} 行未填完整` : '已导出 CSV');
+}
+function mdCell(v){
+  return String(v == null ? '' : v).replace(/\|/g, '\\|').replace(/\n+/g, '<br>');
+}
+function buildMarkdown(){
+  const lines = [];
+  lines.push('# 比赛选题登记');
+  lines.push('');
+  lines.push('- 截止：2026-11-29');
+  lines.push('- 导出：' + new Date().toLocaleString('zh-CN', { hour12:false }));
+  lines.push('');
+  lines.push('| # | 姓名 | 选择题材 | 理由 | 风险 / 分工 |');
+  lines.push('|---|---|---|---|---|');
+  state.members.forEach((m, i) => {
+    if (!m.name.trim() && !m.topic && !m.reason.trim() && !m.note.trim()) return;
+    lines.push(`| ${i + 1} | ${mdCell(m.name.trim())} | ${mdCell(topicLabel(m.topic))} | ${mdCell(m.reason.trim())} | ${mdCell(m.note.trim())} |`);
+  });
+  const filled = filledMembers();
+  if (filled.length) {
+    const counts = new Map();
+    filled.forEach(m => counts.set(m.topic, (counts.get(m.topic) || 0) + 1));
+    lines.push('');
+    lines.push('## 汇总');
+    Array.from(counts.entries())
+      .sort((a, b) => b[1] - a[1])
+      .forEach(([id, n]) => {
+        const names = filled.filter(m => m.topic === id).map(m => m.name.trim()).join('、');
+        lines.push(`- **${topicLabel(id)}**：${n} 票（${names}）`);
+      });
+  }
+  return lines.join('\n');
+}
+async function copyMarkdown(){
+  const text = buildMarkdown();
+  let ok = false;
+  try {
+    await navigator.clipboard.writeText(text);
+    ok = true;
+  } catch (e) {
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      ok = document.execCommand('copy');
+      ta.remove();
+    } catch (e2) { ok = false; }
+  }
+  toast(ok ? '已复制 Markdown 汇总，可直接粘贴' : '复制失败，请用“导出 CSV”');
+}
+
+/* ---------- countdown ---------- */
+function updateCountdown(){
+  const el = $('#countdown');
+  const diff = DEADLINE.getTime() - Date.now();
+  if (diff <= 0) {
+    el.textContent = '报名已截止';
+    el.classList.add('urgent');
+    return;
+  }
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const end = new Date(DEADLINE);
+  end.setHours(0, 0, 0, 0);
+  const days = Math.round((end.getTime() - today.getTime()) / 86400000);
+  el.textContent = days <= 0 ? '今天截止' : days === 1 ? '明天截止' : `距截止 ${days} 天`;
+  el.classList.toggle('urgent', days <= 2);
+}
+
+/* ---------- events ---------- */
+function bindEvents(){
+  $('#filters').addEventListener('click', e => {
+    const btn = e.target.closest('.filter');
+    if (!btn) return;
+    $$('.filter').forEach(b => b.classList.toggle('active', b === btn));
+    const f = btn.dataset.filter;
+    $$('.topic-card').forEach(card => {
+      card.style.display = (f === 'all' || card.dataset.group === f) ? '' : 'none';
+    });
+  });
+
+  $('#topicGrid').addEventListener('click', e => {
+    const btn = e.target.closest('.detail-btn');
+    if (!btn) return;
+    const card = btn.closest('.topic-card');
+    const open = card.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    btn.innerHTML = open ? '收起 <span class="chev">▴</span>' : '细节 <span class="chev">▾</span>';
+  });
+
+  const rows = $('#rows');
+  const onEdit = e => {
+    const field = e.target.dataset.field;
+    if (!field) return;
+    const row = e.target.closest('.member-row');
+    if (!row) return;
+    const m = memberById(row.dataset.uid);
+    if (!m) return;
+    m[field] = e.target.value;
+    m.updatedAt = new Date().toISOString();
+    if (field === 'reason') {
+      const c = row.querySelector('[data-counter]');
+      const len = m.reason.trim().length;
+      c.textContent = len + ' 字';
+      c.classList.toggle('ok', len >= 60);
+    }
+    scheduleSave();
+    updateStats();
+    updatePicks();
+    updateTodo();
+    renderSummary();
+  };
+  rows.addEventListener('input', onEdit);
+  rows.addEventListener('change', onEdit);
+
+  rows.addEventListener('click', e => {
+    const btn = e.target.closest('[data-action="delete"]');
+    if (!btn) return;
+    const row = btn.closest('.member-row');
+    if (!row) return;
+    if (state.members.length <= 1) {
+      toast('至少保留一行');
+      return;
+    }
+    state.members = state.members.filter(m => m.uid !== row.dataset.uid);
+    saveNow();
+    renderRows();
+    updateAll();
+    toast('已删除一行');
+  });
+
+  $('#addRow').addEventListener('click', () => {
+    state.members.push(newMember());
+    saveNow();
+    renderRows();
+    updateAll();
+    const all = $$('.member-row');
+    const last = all[all.length - 1];
+    if (last) {
+      const input = last.querySelector('input[data-field="name"]');
+      if (input) input.focus();
+    }
+  });
+
+  $('#exportCsv').addEventListener('click', downloadCsv);
+  $('#copyMd').addEventListener('click', copyMarkdown);
+  $('#printPage').addEventListener('click', () => window.print());
+
+  $('#reset').addEventListener('click', () => {
+    if (!confirm('确定清空所有已填内容吗？此操作不可撤销，建议先导出 CSV。')) return;
+    state.members = Array.from({ length: 5 }, newMember);
+    saveNow();
+    renderRows();
+    updateAll();
+    toast('已清空');
+  });
+
+  const dlg = $('#shareDialog');
+  $('#shareBtn').addEventListener('click', () => {
+    if (typeof dlg.showModal === 'function') dlg.showModal();
+    else dlg.setAttribute('open', '');
+  });
+  $('#closeShare').addEventListener('click', () => dlg.close());
+  dlg.addEventListener('click', e => {
+    if (e.target === dlg) dlg.close();
+  });
+
+  window.addEventListener('beforeunload', saveNow);
+}
+
+/* ---------- init ---------- */
+function init(){
+  renderTopics();
+  loadState();
+  renderRows();
+  bindEvents();
+  updateAll();
+  updateCountdown();
+  setInterval(updateCountdown, 60000);
+}
+init();
+</script>
+</body>
+</html>
